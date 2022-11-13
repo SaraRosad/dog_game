@@ -4,11 +4,15 @@
         <title></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="background/css/style.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
-        <canvas id="canvas1"></canvas>
+        <div id="container">
+            <canvas id="canvas1"></canvas>
+            <p>Game Speed:  <span id="showGameSpeed"></span></p>
+            <input type="range" min="0" max="20" value="5" class="slider" id="slider">
+        </div>
         
-        <script src="background/js/script.js"></script>
+        <script src="js/script.js"></script>
     </body>
 </html>
