@@ -12,8 +12,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 20%;
-    align-items: center;
+    width: 50%;
+    align-items: flex-start;
     justify-content: center;
 }
 label{

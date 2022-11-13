@@ -3,8 +3,9 @@ const ctx = canvas.getContext('2d');
 
 const CANVAS_WIDTH = canvas.width = 500;
 const CANVAS_HEIGHT = canvas.height = 1000;
-const enemiesAmout = document.getElementById('enemiesAmount');
-const numberOfEnemies = 100;
+const enemiesAmount = document.getElementById('enemiesAmount');
+const showEnemiesCount = document.getElementById('enemiesCount');
+let numberOfEnemies = 0;
 const enemiesArray = [];
 
 let gameFrame = 0;
@@ -34,11 +35,22 @@ class Enemy{
     }
 };
 
-for (let i = 0; i< numberOfEnemies; i++){
-    enemiesArray.push(new Enemy());
-}
+enemiesAmount.value = numberOfEnemies;
+showEnemiesCount.innerHTML = numberOfEnemies;
+enemiesAmount.addEventListener('change', function(){
+    enemiesArray.length = 0;
+    numberOfEnemies = this.value;
+    showEnemiesCount.innerHTML = numberOfEnemies;
+    for (let i = 0; i < numberOfEnemies; i++){
+        enemiesArray.push(new Enemy());
+    }
+});
+
+
+
 
 window.addEventListener('load', function(){
+    
    
     function animate(){
         ctx.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -48,7 +60,7 @@ window.addEventListener('load', function(){
             enemy.update();
             enemy.draw();
         });
-
+        
         gameFrame++;
         requestAnimationFrame(animate);
     }
