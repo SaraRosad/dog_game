@@ -1,0 +1,33 @@
+#canvas1{
+    border: 3px solid black;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0, -50%);
+    width: 500px;
+    height: 1000px;
+}
+
+#content{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    align-items: center;
+    justify-content: center;
+}
+label{
+    font-size: medium;
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 2px;
+}
+input{
+    background-color: gray;
+    padding: 5px;
+    border: none;
+    outline: none;
+    outline-color: none;
+    border-radius: 99px;
+    color: white;
+}
