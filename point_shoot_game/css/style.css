@@ -16,6 +16,7 @@ canvas{
     opacity: 0;
 }
 
-#canvas2{
+#backgroundCanvas2{
+    
     z-index: -1;
 }
