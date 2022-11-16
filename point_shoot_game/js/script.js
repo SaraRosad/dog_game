@@ -71,13 +71,13 @@ let particles = [];
 
 class Particle {
     constructor(x, y, size, color){
-        this.x = x;
-        this.y = y;
         this.size = size;
+        this.x = x  + this.size/2 + Math.random() * 50 - 25;
+        this.y = y + this.size/3 + Math.random() * 50 - 25;
         this.radius = Math.random() * this.size/10;
         this.maxRadius = Math.random() * 20 + 35;
         this.markedForDeletion = false;
-        this.speedX = Math.random() * 1 + 0.5;
+        this.speedX = Math.random() * 1 + 0.3;
         this.color = color;
     }
     update(){
@@ -108,7 +108,9 @@ function drawGameOver(){
     ctx.fillStyle = 'white';
     ctx.fillText('GAME OVER, your score is: '+ score, canvas.width/2 + 5, canvas.height/2 + 5);
 }
+
 let explosions = [];
+
 class Explosion {
     constructor(x, y, size){
         this.image = new Image();
@@ -116,8 +118,9 @@ class Explosion {
         this.spriteWidth = '200';
         this.spriteHeight = '179';
         this.size = size;
-        this.x = x + this.size/2;
-        this.y = y + this.size/3;
+        this.x = x;
+        this.y = y;
+        this.frame = 0;
         this.sound = new Audio();
         this.sound.src = 'sounds/boom.wav';
         this.timeSinceLastFrame = 0;
@@ -125,7 +128,7 @@ class Explosion {
         this.markedForDeletion = false;
     }
     update(deltatime){
-        if(this.frame === 0)this.sound.play();
+        if(this.frame === 0) this.sound.play();
         this.timeSinceLastFrame += deltatime;
         if(this.timeSinceLastFrame > this.frameInterval){
             this.frame++;
@@ -147,13 +150,14 @@ window.addEventListener('click', function(e){
             object.markedForDeletion = true;
             score++;
             explosions.push(new Explosion(object.x, object.y, object.width));
+            console.log(explosions);
         }
     });
 });
 function animate(timestamp){
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    collisionCtx.clearRect(0, 0, collisionCanvas.width, collisionCanvas.height);
+    collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
     let deltatime = timestamp - lastTime;
     lastTime = timestamp;
     timeToNextRaven += deltatime;
@@ -163,6 +167,7 @@ function animate(timestamp){
         timeToNextRaven = 0;
         ravens.sort(function(a,b){
             return a.width - b.width;
+
         });
     }
     drawScore();
