@@ -2,6 +2,12 @@ const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+const collisionCanvas = document.getElementById('collisionCanvas');
+const collisionCtx = collisionCanvas.getContext('2d');
+collisionCanvas.width = window.innerWidth;
+collisionCanvas.height = window.innerHeight;
+
 let timeToNextRaven = 0;
 let ravenInternal = 500;
 let lastTime = 0;
@@ -26,6 +32,8 @@ class Raven {
         this.maxFrame = 4;
         this.timeSinceFlap = 0;
         this.flapInterval = Math.random() * 50 + 50;
+        this.randomColors = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)];
+        this.color = 'rgba(' + this.randomColors[0] + ',' + this.randomColors[1] + ',' + this.randomColors[2] + ')';
     }
 
     update(deltatime){
@@ -43,23 +51,52 @@ class Raven {
             if(this.frame > this.maxFrame) this.frame = 0;
             else this.frame++;
             this.timeSinceFlap = 0;    
-
-            console.log(deltatime);
         }
     }
     draw(){
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
+        collisionCtx.fillStyle = this.color;
+        collisionCtx.fillRect(this.x, this.y, this.width, this.height);
+       // ctx.strokeRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
+       
+       // collisionCtx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
     }
 }
 function drawScore(){
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'black';
     ctx.fillText('Score:' + score, 50,75);
+    ctx.fillStyle = 'white';
+    ctx.fillText('Score:' + score, 55,80);
 }
-
+let explosions = [];
+class Explosion {
+    constructor(x, y, size){
+        this.image = new Image();
+        this.image.src = 'img/boom.png';
+        this.spriteWidth = '200';
+        this.spriteHeight = '179';
+        this.size = size;
+        this.x = x;
+        this.y = y;
+        this.sound = new Audio();
+        this.sound.src = 'sounds/boom.wav';
+    }
+}
+window.addEventListener('click', function(e){
+    const detecPixelColor = collisionCtx.getImageData(e.x, e.y, 1,1);
+    console.log(detecPixelColor);
+    const pc = detecPixelColor.data;
+    ravens.forEach(object =>{
+        if(object.randomColors[0] === pc[0] && object.randomColors[1] === pc[1] && object.randomColors[2] === pc[2]){
+            object.markedForDeletion = true;
+            score++;
+        }
+    });
+});
 function animate(timestamp){
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    collisionCtx.clearRect(0, 0, collisionCanvas.width, collisionCanvas.height);
     let deltatime = timestamp - lastTime;
     lastTime = timestamp;
     timeToNextRaven += deltatime;
@@ -67,6 +104,9 @@ function animate(timestamp){
     if(timeToNextRaven > ravenInternal){
         ravens.push(new Raven());
         timeToNextRaven = 0;
+        ravens.sort(function(a,b){
+            return a.width - b.width;
+        });
     }
     drawScore();
     [...ravens].forEach(object => object.update(deltatime));
