@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = window.innerHeight - 2;
 
 const collisionCanvas = document.getElementById('collisionCanvas');
 const collisionCtx = collisionCanvas.getContext('2d');
@@ -30,8 +30,8 @@ const backgroundLayer3 = new Image();
 backgroundLayer3.src = 'img/layers/layer-3.png';
 const backgroundLayer4 = new Image();
 backgroundLayer4.src = 'img/layers/layer-4.png';
-const backgroundLayer5 = new Image();
-backgroundLayer5.src = 'img/layers/layer-5.png';
+/* const backgroundLayer5 = new Image();
+backgroundLayer5.src = 'img/layers/layer-5.png'; */
 
 window.addEventListener('load', function(){
 
@@ -39,8 +39,8 @@ window.addEventListener('load', function(){
         constructor(image, speedModifier){
             this.x = 0;
             this.y = 0;
-            this.width = 2400;
-            this.height = 700;
+            this.width = CANVAS_WIDTH;
+            this.height = CANVAS_HEIGHT;
             this.image = image;
             this.speedModifier = speedModifier;
             this.speed = gameSpeed * this.speedModifier;
@@ -62,9 +62,9 @@ window.addEventListener('load', function(){
     const layer2 = new Layer(backgroundLayer2, 0.4);
     const layer3 = new Layer(backgroundLayer3, 0.6);
     const layer4 = new Layer(backgroundLayer4, 0.8);
-    const layer5 = new Layer(backgroundLayer5, 1);
+   // const layer5 = new Layer(backgroundLayer5, 1);
     
-    const gameObjects = [layer1, layer2, layer3, layer4, layer5];
+    const gameObjects = [layer1, layer2, layer3, layer4, /* layer5 */];
     
     class Raven {
         constructor(){
@@ -91,10 +91,10 @@ window.addEventListener('load', function(){
 
         update(deltatime){
             if(this.y < 0 || this.y > canvas.height - this.height){
-                this.directionY = this.directionY * -1;
+                this.directionY = this.directionY * -1.5;
             }
             this.x -= this.directionX;
-            this.y += this.directionY;
+            this.y += this.directionY/2;
 
             if(this.x < 0 - this.width) this.markedForDeletion = true;
 
@@ -113,6 +113,7 @@ window.addEventListener('load', function(){
             if(this.x < 0 - this.width) gameOver = true;
         }
         draw(){
+
             collisionCtx.fillStyle = this.color;
             collisionCtx.fillRect(this.x, this.y, this.width, this.height);
             ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
@@ -222,13 +223,13 @@ window.addEventListener('load', function(){
 
             });
         }
-        drawScore();
+      
         [ ...gameObjects, ...particles, ...ravens, ...explosions].forEach(object => object.update(deltatime));
         [ ...gameObjects, ...particles, ...ravens, ...explosions].forEach(object => object.draw());
         ravens = ravens.filter(object => !object.markedForDeletion);
         explosions = explosions.filter(object => !object.markedForDeletion);
         particles = particles.filter(object => !object.markedForDeletion);
-        
+        drawScore();
         if(!gameOver)requestAnimationFrame(animate);
         else drawGameOver();
     }
